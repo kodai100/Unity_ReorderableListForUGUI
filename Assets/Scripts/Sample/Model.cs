@@ -4,63 +4,6 @@ using System.Linq;
 using UniRx;
 using UnityEngine;
 
-public class Test : MonoBehaviour
-{
-
-    [SerializeField] private TestPresenter _presenter;
-
-    private List<IDisposable> _disposable = new();
-    
-    private void Start()
-    {
-        var model = new Model();
-        
-        _disposable.AddRange(_presenter.Bind(model));
-
-        _disposable.AddRange(Setup(model));
-    }
-    
-    private IEnumerable<IDisposable> Setup(Model model)
-    {
-
-        yield return _presenter.OnAddButtonClicked.Subscribe(_ =>
-        {
-            model.AddData();
-        });
-
-        yield return _presenter.OnSelected.Subscribe(guid =>
-        {
-            model.UpdateSelection(guid);
-        });
-
-        yield return _presenter.OnRemoveButtonClicked.Subscribe(_ =>
-        {
-            model.RemoveData();
-        });
-
-        yield return _presenter.OnClearButtonClicked.Subscribe(_ =>
-        {
-            model.ClearData();
-        });
-        
-        yield return _presenter.OnOrderChanged.Subscribe(list =>
-        {
-            model.UpdateOrder(list);
-        });
-
-    }
-
-    private void OnDestroy()
-    {
-        _disposable.ForEach(d =>
-        {
-            d.Dispose();
-        });
-        _disposable.Clear();
-    }
-}
-
-
 public class Entity
 {
     public Guid Id;
@@ -104,7 +47,7 @@ public class Model
     {
         var selectedTarget = _data.Value.FirstOrDefault(x => x.Id == id);
         Debug.Log($"Update Selection : {id}");
-        _selected.Value = selectedTarget;
+        _selected.SetValueAndForceNotify(selectedTarget);
     }
 
     public void UpdateSelectedData(string name)

@@ -32,8 +32,6 @@ public abstract class ReorderableListView<T> : MonoBehaviour where T : Reorderab
             
             component.DragController.OnOrderChanged.Subscribe(_ =>
             {
-                Debug.Log("On Order Changed");
-                
                 _components.ForEach(c =>
                 {
                     c.RecalculateIndex();
